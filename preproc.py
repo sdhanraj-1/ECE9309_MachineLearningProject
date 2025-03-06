@@ -94,7 +94,7 @@ vectorizedDF:pd.DataFrame = pd.concat(
             "citations": cleanedDF["citations"],
         }).reset_index(drop=True),
         titleEmbDF.reset_index(drop=True),
-        authorEmbDF.reset_index(drop=True),
+        # authorEmbDF.reset_index(drop=True),
         abstractEmbDF.reset_index(drop=True)
     ],
     axis=1
