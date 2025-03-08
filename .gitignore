@@ -1,6 +1,9 @@
 # Custom ignores
 dump/
 
+#for the transformer model
+*.pth  
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
