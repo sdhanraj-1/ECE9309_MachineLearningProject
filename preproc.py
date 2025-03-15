@@ -48,7 +48,9 @@ def train_test_vali(df:pd.DataFrame):
     return (tra, tes, val) # Still DataFrames
 
 # Import dataset
-sourceDF:pd.DataFrame = pd.read_csv("./readOnly/database.csv")
+sourceDF:pd.DataFrame = pd.read_csv(
+    "./readOnly/database.csv", index_col=1
+).drop(columns=["Unnamed: 0"]) # Drop unused column
 
 # Basic statistics
 print("sourceDF:")
@@ -59,7 +61,9 @@ print(f"NaNs Count:\n{sourceDF.isnull().sum()}\n\n")
 
 # Clean Data (NaNs for Abstracts) (only "abstract" has some NaNs)
 # Drop papers w NaN values
-cleanedDF = sourceDF.dropna(axis=0, subset=["abstract"])
+cleanedDF = sourceDF.dropna(
+    axis=0, subset=["abstract"]
+).reset_index(drop=True)
 
 # Extract the titles and abstracts
 titles:list[str] = list(cleanedDF["title"])
@@ -72,15 +76,24 @@ authorEmbeddings:npt.NDArray = np.array(embed(authors).numpy())
 abstractEmbeddings:npt.NDArray = np.array(embed(abstracts).numpy())
 titleEmbDF:pd.DataFrame = pd.DataFrame(
     titleEmbeddings,
-    columns=[f"title_emb_{i}" for i in range(titleEmbeddings.shape[1])]
+    columns=[
+        f"title_emb_{i}"
+        for i in range(titleEmbeddings.shape[1])
+    ]
 )
 authorEmbDF:pd.DataFrame = pd.DataFrame(
     authorEmbeddings,
-    columns=[f"authors_emb_{i}" for i in range(authorEmbeddings.shape[1])]
+    columns=[
+        f"authors_emb_{i}"
+        for i in range(authorEmbeddings.shape[1])
+    ]
 )
 abstractEmbDF:pd.DataFrame = pd.DataFrame(
     abstractEmbeddings,
-    columns=[f"abstract_emb_{i}" for i in range(abstractEmbeddings.shape[1])]
+    columns=[
+        f"abstract_emb_{i}"
+        for i in range(abstractEmbeddings.shape[1])
+    ]
 )
 
 # Construct the vectorized dataset
@@ -88,8 +101,6 @@ abstractEmbDF:pd.DataFrame = pd.DataFrame(
 vectorizedDF:pd.DataFrame = pd.concat(
     [
         pd.DataFrame({
-            "unnamed": cleanedDF["Unnamed: 0"],
-            "id": cleanedDF["Id"],
             "year": cleanedDF["year"],
             "citations": cleanedDF["citations"],
         }).reset_index(drop=True),
@@ -99,8 +110,6 @@ vectorizedDF:pd.DataFrame = pd.concat(
     ],
     axis=1
 ).astype({ # Ensure these ones are np.int64
-    "unnamed": np.int64,
-    "id": np.int64,
     "year": np.int64,
     "citations": np.int64,
 })
