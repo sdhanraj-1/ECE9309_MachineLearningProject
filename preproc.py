@@ -100,19 +100,19 @@ abstractEmbDF:pd.DataFrame = pd.DataFrame(
 # Not using links in predictions
 vectorizedDF:pd.DataFrame = pd.concat(
     [
-        pd.DataFrame({
-            "year": cleanedDF["year"],
-            "citations": cleanedDF["citations"],
-        }).reset_index(drop=True),
+        # pd.DataFrame({
+        #     "year": cleanedDF["year"],
+        #     "citations": cleanedDF["citations"],
+        # }).reset_index(drop=True),
         titleEmbDF.reset_index(drop=True),
         # authorEmbDF.reset_index(drop=True),
         abstractEmbDF.reset_index(drop=True)
     ],
     axis=1
-).astype({ # Ensure these ones are np.int64
-    "year": np.int64,
-    "citations": np.int64,
-})
+)# .astype({ # Ensure these ones are np.int64
+#     "year": np.int64,
+#     "citations": np.int64,
+# })
 
 # Training/Testing/Validation Splitting
 (
