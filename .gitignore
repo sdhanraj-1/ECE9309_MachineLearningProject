@@ -1,6 +1,3 @@
-# Custom ignores
-dump/
-
 #for the transformer model
 *.pth  
 
