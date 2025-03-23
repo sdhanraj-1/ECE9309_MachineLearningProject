@@ -45,8 +45,19 @@ Returns:
 """
 def compute_tfidf_similarity(test_texts, top10_texts):
     # Flatten all texts to fit TF-IDF on the entire dataset
-    all_texts = test_texts + [paper for sublist in top10_texts for paper in sublist]
+    #all_texts = test_texts + [paper for sublist in top10_texts for paper in sublist]
 
+    # Flatten all texts to fit TF-IDF on the entire dataset
+    #all_texts = list(map(str, test_texts)) + [str(paper) for sublist in top10_texts for paper in sublist]
+
+    # Ensure inputs are lists of strings
+    test_texts = list(test_texts) if isinstance(test_texts, np.ndarray) else test_texts
+    top10_texts = list(top10_texts) if isinstance(top10_texts, np.ndarray) else top10_texts
+
+    all_texts = test_texts + top10_texts  # Combine test and recommended texts
+    
+    # Ensure `all_texts` is a list of strings
+    all_texts = [str(text) for text in all_texts]
     # Initialize and fit TF-IDF vectorizer
     vectorizer = TfidfVectorizer(stop_words='english', max_features=5000)
     tfidf_matrix = vectorizer.fit_transform(all_texts)
