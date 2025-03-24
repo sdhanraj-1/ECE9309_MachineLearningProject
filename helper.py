@@ -53,6 +53,27 @@ def plot_cosine_similarity(similarity_mean, similarity_median):
     plt.legend()
     #plt.savefig("plot.png", dpi=300, bbox_inches="tight")
     plt.show()
+
+"""
+Plots the Mean and Median of Pearson Correlation on Test Set
+
+Parameters:
+- correlation_mean: The output from cosine_similarity_mean_median
+- correlation_median: The output from cosine_similarity_mean_median
+
+Returns:
+"""
+def plot_pearson_correlation(correlation_mean, correlation_median):
+    # Plot each array as a separate line
+    plt.figure(figsize=(30, 5))
+    plt.plot(correlation_mean, linestyle="-", label="Mean")
+    plt.plot(correlation_median, linestyle="-", label="Median")
+    plt.xlabel("Test Paper")
+    plt.ylabel("Pearson Correlation")
+    plt.title("Mean and Median of Pearson Correlation on Test Set")
+    plt.legend()
+    #plt.savefig("plot.png", dpi=300, bbox_inches="tight")
+    plt.show()
     
 """
 Computes TF-IDF representations for test papers and top 10 recommended papers.
