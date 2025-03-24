@@ -161,21 +161,21 @@ Returns:
 - A word cloud plot of the top 5 recommended papers
 """
 
-def create_wordcloud(paper_ids, papers):
-    wordcloud_text = ""
+def createWCloud(paper_ids, papers):
+    cloud_text = ""
     for paper_id in paper_ids:
         title = papers.loc[papers["id"] == paper_id, "title"].values
         abstract = papers.loc[papers["id"] == paper_id, "abstract"].values
-        wordcloud_text += " " + title + " " + abstract  # Aggregate text for word cloud
+        cloud_text += " " + title + " " + abstract  # Aggregate text for word cloud
 
     # Generate and display word cloud from top 5 paper content
-    if wordcloud_text.strip():
-        wordcloud = WordCloud(width=800, height=400, background_color='white', max_words=20).generate(wordcloud_text)
+    if cloud_text.strip():
+        wcObj = WordCloud(width=800, height=400, background_color='white', max_words=20).generate(cloud_text)
 
         plt.figure(figsize=(10, 5))
-        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.imshow(wcObj, interpolation='bilinear')
         plt.axis("off")
         plt.title("Word Cloud of Top 5 Recommended Papers")
         plt.show()
         
-        return wordcloud
+        return wcObj
