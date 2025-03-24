@@ -32,6 +32,27 @@ def cosine_similarity_mean_median(similarity_matrix):
     return similarity_mean, similarity_median
 
 """
+Plots the Mean and Median of Cosine Similarity on Test Set
+
+Parameters:
+- similarity_mean: The output from cosine_similarity_mean_median
+- similarity_median: The output from cosine_similarity_mean_median
+
+Returns:
+"""
+def plot_cosine_similarity(similarity_mean, similarity_median):
+    # Plot each array as a separate line
+    plt.figure(figsize=(30, 5))
+    plt.plot(similarity_mean, linestyle="-", label="Mean")
+    plt.plot(similarity_median, linestyle="-", label="Median")
+    plt.xlabel("Test Paper")
+    plt.ylabel("Cosine Similiarity")
+    plt.title("Mean and Median of Cosine Similarity on Test Set")
+    plt.legend()
+    #plt.savefig("plot.png", dpi=300, bbox_inches="tight")
+    plt.show()
+    
+"""
 Computes TF-IDF representations for test papers and top 10 recommended papers.
 
 Parameters:
@@ -101,3 +122,33 @@ def compute_pearson_correlation(test_embeddings, top10_embeddings):
         correlation_median.append(np.median(correlations))
     
     return correlation_mean, correlation_median
+
+"""
+Creates a word cloud from the top 5 recommended papers
+
+Parameters:
+- paper_ids: A list of ids of the top 5 recommended papers
+- papers: The cleaned papers dataset from database_clean.csv as a pandas DataFrame
+
+Returns:
+- A word cloud plot of the top 5 recommended papers
+"""
+
+def create_wordcloud(paper_ids, papers):
+    wordcloud_text = ""
+    for paper_id in paper_ids:
+        title = papers.loc[papers["id"] == paper_id, "title"].values
+        abstract = papers.loc[papers["id"] == paper_id, "abstract"].values
+        wordcloud_text += " " + title + " " + abstract  # Aggregate text for word cloud
+
+    # Generate and display word cloud from top 5 paper content
+    if wordcloud_text.strip():
+        wordcloud = WordCloud(width=800, height=400, background_color='white', max_words=20).generate(wordcloud_text)
+
+        plt.figure(figsize=(10, 5))
+        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.axis("off")
+        plt.title("Word Cloud of Top 5 Recommended Papers")
+        plt.show()
+        
+        return wordcloud

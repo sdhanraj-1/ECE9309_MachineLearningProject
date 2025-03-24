@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.stats import pearsonr
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
 
 """
 Computes the mean and median of consine similarity matrix.
@@ -31,6 +33,27 @@ def cosine_similarity_mean_median(similarity_matrix):
 
     return similarity_mean, similarity_median
 
+"""
+Plots the Mean and Median of Cosine Similarity on Test Set
+
+Parameters:
+- similarity_mean: The output from cosine_similarity_mean_median
+- similarity_median: The output from cosine_similarity_mean_median
+
+Returns:
+"""
+def plot_cosine_similarity(similarity_mean, similarity_median):
+    # Plot each array as a separate line
+    plt.figure(figsize=(30, 5))
+    plt.plot(similarity_mean, linestyle="-", label="Mean")
+    plt.plot(similarity_median, linestyle="-", label="Median")
+    plt.xlabel("Test Paper")
+    plt.ylabel("Cosine Similiarity")
+    plt.title("Mean and Median of Cosine Similarity on Test Set")
+    plt.legend()
+    #plt.savefig("plot.png", dpi=300, bbox_inches="tight")
+    plt.show()
+    
 """
 Computes TF-IDF representations for test papers and top 10 recommended papers.
 
@@ -69,6 +92,32 @@ def compute_tfidf_similarity(test_texts, top10_texts):
 
     return tfidf_matrix, test_vectors, top10_vectors
 
+def compute_tfidf_similarity_v(test_texts, top10_texts):
+    # Flatten all texts to fit TF-IDF on the entire dataset
+    #all_texts = test_texts + [paper for sublist in top10_texts for paper in sublist]
+
+    # Flatten all texts to fit TF-IDF on the entire dataset
+    #all_texts = list(map(str, test_texts)) + [str(paper) for sublist in top10_texts for paper in sublist]
+
+    # Ensure inputs are lists of strings
+    test_texts = list(test_texts) if isinstance(test_texts, np.ndarray) else test_texts
+    top10_texts = list(top10_texts) if isinstance(top10_texts, np.ndarray) else top10_texts
+
+    all_texts = test_texts + top10_texts  # Combine test and recommended texts
+    
+    # Ensure `all_texts` is a list of strings
+    all_texts = [str(text) for text in all_texts]
+    # Initialize and fit TF-IDF vectorizer
+    vectorizer = TfidfVectorizer(stop_words='english', max_features=5000)
+    tfidf_matrix = vectorizer.fit_transform(all_texts)
+
+    # Split TF-IDF matrix into test papers and recommended papers
+    num_test_papers = len(test_texts)
+    test_vectors = tfidf_matrix[:num_test_papers]  # First 'num_test_papers' rows
+    top10_vectors = tfidf_matrix[num_test_papers:].toarray().reshape(num_test_papers, 10, -1)  # Reshape for 10 recommendations
+
+    return tfidf_matrix, test_vectors, top10_vectors, vectorizer
+    
 """
 Computes Pearson’s correlation coefficient between each test paper and each of its top 10 recommended papers.
 
@@ -101,3 +150,32 @@ def compute_pearson_correlation(test_embeddings, top10_embeddings):
         correlation_median.append(np.median(correlations))
     
     return correlation_mean, correlation_median
+"""
+Creates a word cloud from the top 5 recommended papers
+
+Parameters:
+- paper_ids: A list of ids of the top 5 recommended papers
+- papers: The cleaned papers dataset from database_clean.csv as a pandas DataFrame
+
+Returns:
+- A word cloud plot of the top 5 recommended papers
+"""
+
+def create_wordcloud(paper_ids, papers):
+    wordcloud_text = ""
+    for paper_id in paper_ids:
+        title = papers.loc[papers["id"] == paper_id, "title"].values
+        abstract = papers.loc[papers["id"] == paper_id, "abstract"].values
+        wordcloud_text += " " + title + " " + abstract  # Aggregate text for word cloud
+
+    # Generate and display word cloud from top 5 paper content
+    if wordcloud_text.strip():
+        wordcloud = WordCloud(width=800, height=400, background_color='white', max_words=20).generate(wordcloud_text)
+
+        plt.figure(figsize=(10, 5))
+        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.axis("off")
+        plt.title("Word Cloud of Top 5 Recommended Papers")
+        plt.show()
+        
+        return wordcloud
