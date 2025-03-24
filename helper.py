@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -15,7 +16,7 @@ Returns:
 - similarity_mean: Mean value of top 10 recommended papers' similarity score.
 - similarity_median: Median value of top 10 recommended papers' similarity score.
 """
-def cosine_similarity_mean_median(similarity_matrix):
+def cosine_similarity_mean_median(similarity_matrix:npt.NDArray):
     # Sort the similarity matrix in reverse order and select the top 10 data points
     top_n = 10
     top_indices = np.argsort(-similarity_matrix, axis=1)[:, :top_n]  
@@ -42,7 +43,7 @@ Parameters:
 
 Returns:
 """
-def plot_cosine_similarity(similarity_mean, similarity_median):
+def plot_cosine_similarity(similarity_mean:npt.NDArray, similarity_median:npt.NDArray):
     # Plot each array as a separate line
     plt.figure(figsize=(30, 5))
     plt.plot(similarity_mean, linestyle="-", label="Mean")
@@ -87,7 +88,7 @@ Returns:
 - test_vectors: TF-IDF vectors for test papers.
 - top10_vectors: TF-IDF vectors for top 10 recommendations per test paper.
 """
-def compute_tfidf_similarity(test_texts, top10_texts):
+def compute_tfidf_similarity(test_texts:list, top10_texts:list):
     # Flatten all texts to fit TF-IDF on the entire dataset
     #all_texts = test_texts + [paper for sublist in top10_texts for paper in sublist]
 
@@ -124,7 +125,7 @@ Returns:
 - correlation_mean: The mean Pearson correlation of the top 10 recommendations per test paper.
 - correlation_median: The median Pearson correlation per test paper.
 """
-def compute_pearson_correlation(test_embeddings, top10_embeddings):
+def compute_pearson_correlation(test_embeddings:npt.NDArray, top10_embeddings:npt.NDArray):
     num_test_papers = test_embeddings.shape[0]
     
     correlation_mean = []
@@ -157,21 +158,22 @@ Returns:
 - A word cloud plot of the top 5 recommended papers
 """
 
-def createWCloud(paper_ids, papers):
-    cloud_text = ""
-    for paper_id in paper_ids:
-        title = papers.loc[papers["id"] == paper_id, "title"].values
-        abstract = papers.loc[papers["id"] == paper_id, "abstract"].values
-        cloud_text += " " + title + " " + abstract  # Aggregate text for word cloud
+def createWCloud(paper_ids:list, papers:pd.DataFrame):
+    # Concatenate into a single string
+    text_list = papers.loc[
+        papers["id"].isin(paper_ids), ["title", "abstract"]
+    ].apply(
+        lambda row: f"{row['title']} {row['abstract']}", axis=1
+    ).tolist()
+    cloud_text = " ".join(text_list)
 
     # Generate and display word cloud from top 5 paper content
     if cloud_text.strip():
         wcObj = WordCloud(width=800, height=400, background_color='white', max_words=20).generate(cloud_text)
-
         plt.figure(figsize=(10, 5))
         plt.imshow(wcObj, interpolation='bilinear')
         plt.axis("off")
-        plt.title("Word Cloud of Top 5 Recommended Papers")
+        plt.title("Word Cloud of Top Recommended Papers")
         plt.show()
         
         return wcObj
