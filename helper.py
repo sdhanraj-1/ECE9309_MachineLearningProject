@@ -52,7 +52,9 @@ def plot_cosine_similarity(similarity_mean:npt.NDArray, similarity_median:npt.ND
     plt.ylabel("Cosine Similiarity")
     plt.title("Mean and Median of Cosine Similarity on Test Set")
     plt.legend()
-    #plt.savefig("plot.png", dpi=300, bbox_inches="tight")
+    # plt.savefig(
+    #     "./images/003_cos_sim.png", bbox_inches='tight', dpi=100
+    # )
     plt.show()
 
 """
@@ -73,7 +75,9 @@ def plot_pearson_correlation(correlation_mean, correlation_median):
     plt.ylabel("Pearson Correlation")
     plt.title("Mean and Median of Pearson Correlation on Test Set")
     plt.legend()
-    #plt.savefig("plot.png", dpi=300, bbox_inches="tight")
+    # plt.savefig(
+    #     "./images/004_pearson.png", bbox_inches='tight', dpi=100
+    # )
     plt.show()
     
 """
@@ -174,6 +178,9 @@ def createWCloud(paper_ids:list, papers:pd.DataFrame):
         plt.imshow(wcObj, interpolation='bilinear')
         plt.axis("off")
         plt.title("Word Cloud of Top Recommended Papers")
+        # plt.savefig(
+        #     "./images/005_wcloud.png", bbox_inches='tight', dpi=100
+        # )
         plt.show()
         
         return wcObj

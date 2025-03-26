@@ -1,3 +1,5 @@
+images/
+
 #for the transformer model
 *.pth  
 
