@@ -198,6 +198,7 @@ def createWCloud(paper_ids:list, papers:pd.DataFrame):
         plt.imshow(wcObj, interpolation='bilinear')
         plt.axis("off")
         plt.title("Word Cloud of Top Recommended Papers")
+        plt.savefig("plot.png", dpi=300, bbox_inches="tight")
         plt.show()
         
         return wcObj
